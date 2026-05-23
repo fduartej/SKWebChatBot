@@ -23,11 +23,12 @@ public class SemanticKernelService
         _endpoint = configuration["SemanticKernel:Endpoint"] ?? "http://localhost:11434";
         _modelName = configuration["SemanticKernel:ModelName"] ?? "llama2:latest";
 
+        var timeoutSeconds = configuration.GetValue<int>("SemanticKernel:TimeoutSeconds", 300);
         _httpClient = new HttpClient();
-        _httpClient.Timeout = TimeSpan.FromSeconds(60); // Aumentado a 60s para acomodar los ~22s de respuesta
+        _httpClient.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
         _httpClient.BaseAddress = new Uri(_endpoint);
 
-        _logger.LogInformation("Configurando Ollama - Endpoint: {Endpoint}, Modelo: {ModelName}, Timeout: 60s", _endpoint, _modelName);
+        _logger.LogInformation("Configurando Ollama - Endpoint: {Endpoint}, Modelo: {ModelName}, Timeout: {Timeout}s", _endpoint, _modelName, timeoutSeconds);
     }
 
     public async Task<string> GetChatResponseAsync(string userMessage)
